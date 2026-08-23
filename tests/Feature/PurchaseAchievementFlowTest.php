@@ -23,7 +23,7 @@ class PurchaseAchievementFlowTest extends TestCase
         Event::fake([AchievementUnlocked::class, BadgeUnlocked::class]);
         $user = User::factory()->create();
 
-        $this->postJson("/users/{$user->id}/purchases", [
+        $this->postJson("/api/users/{$user->id}/purchases", [
             'amount_kobo' => 500000,
             'reference' => 'purchase-001',
         ])->assertCreated();
@@ -42,7 +42,7 @@ class PurchaseAchievementFlowTest extends TestCase
         $user = User::factory()->create();
 
         foreach (range(1, 5) as $number) {
-            $this->postJson("/users/{$user->id}/purchases", [
+            $this->postJson("/api/users/{$user->id}/purchases", [
                 'amount_kobo' => 10000,
                 'reference' => "purchase-{$number}",
             ])->assertCreated();
@@ -80,14 +80,14 @@ class PurchaseAchievementFlowTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->postJson("/users/{$user->id}/purchases", [
+        $this->postJson("/api/users/{$user->id}/purchases", [
             'amount_kobo' => 99,
             'reference' => '',
         ])->assertUnprocessable()->assertJsonValidationErrors(['amount_kobo', 'reference']);
 
         $payload = ['amount_kobo' => 10000, 'reference' => 'duplicate-reference'];
-        $this->postJson("/users/{$user->id}/purchases", $payload)->assertCreated();
-        $this->postJson("/users/{$user->id}/purchases", $payload)
+        $this->postJson("/api/users/{$user->id}/purchases", $payload)->assertCreated();
+        $this->postJson("/api/users/{$user->id}/purchases", $payload)
             ->assertUnprocessable()
             ->assertJsonValidationErrors('reference');
     }
