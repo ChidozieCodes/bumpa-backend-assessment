@@ -15,5 +15,7 @@ jobs:
           coverage: none
       - run: composer validate --strict
       - run: composer install --no-interaction --prefer-dist
+      - run: cp .env.example .env
+      - run: php artisan key:generate
       - run: composer test
       - run: vendor/bin/pint --test
